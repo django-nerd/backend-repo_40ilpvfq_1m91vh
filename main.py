@@ -61,16 +61,26 @@ def auth_dependency(token: str) -> str:
     return doc["nik"]
 
 
-# ====== Seed one demo employee if not exists ======
+# ====== Seed demo employees if not exists ======
 @app.on_event("startup")
 def seed_employee():
     if db is None:
         return
     coll = get_collection("employee")
+    # Seed original demo user
     if not coll.find_one({"nik": "EMP001"}):
         coll.insert_one({
             "nik": "EMP001",
             "name": "Demo User",
+            "division": "IT",
+            "password": "12345",
+            "is_active": True,
+        })
+    # Seed requested employee 555501254121
+    if not coll.find_one({"nik": "555501254121"}):
+        coll.insert_one({
+            "nik": "555501254121",
+            "name": "User 555501254121",
             "division": "IT",
             "password": "12345",
             "is_active": True,
