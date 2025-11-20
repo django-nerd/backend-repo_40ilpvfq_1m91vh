@@ -12,37 +12,37 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Literal, Dict, Any
 
-# Example schemas (replace with your own):
-
-class User(BaseModel):
+class Employee(BaseModel):
     """
-    Users collection schema
-    Collection name: "user" (lowercase of class name)
+    Employees collection schema
+    Collection name: "employee"
     """
-    name: str = Field(..., description="Full name")
-    email: str = Field(..., description="Email address")
-    address: str = Field(..., description="Address")
-    age: Optional[int] = Field(None, ge=0, le=120, description="Age in years")
-    is_active: bool = Field(True, description="Whether user is active")
+    nik: str = Field(..., description="Employee unique ID (NIK)")
+    name: Optional[str] = Field(None, description="Full name")
+    division: Optional[str] = Field(None, description="Division/Department")
+    password: str = Field(..., description="Plain password for demo (default: 12345)")
+    is_active: bool = Field(True, description="Whether employee is active")
 
-class Product(BaseModel):
+class Task(BaseModel):
     """
-    Products collection schema
-    Collection name: "product" (lowercase of class name)
+    Tasks created from the dashboard
+    Collection name: "task"
     """
-    title: str = Field(..., description="Product title")
-    description: Optional[str] = Field(None, description="Product description")
-    price: float = Field(..., ge=0, description="Price in dollars")
-    category: str = Field(..., description="Product category")
-    in_stock: bool = Field(True, description="Whether product is in stock")
+    nik: str = Field(..., description="Employee NIK who requested the task")
+    type: Literal[
+        "install_packages",
+        "activate_windows",
+        "activate_office"
+    ] = Field(..., description="Type of task")
+    status: Literal["pending", "in_progress", "done", "failed"] = Field("pending")
+    payload: Optional[Dict[str, Any]] = Field(None, description="Additional data such as division or package list")
 
-# Add your own schemas here:
-# --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Session(BaseModel):
+    """
+    Simple session tokens
+    Collection name: "session"
+    """
+    token: str = Field(...)
+    nik: str = Field(...)
