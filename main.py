@@ -2,7 +2,7 @@ import os
 import secrets
 from typing import Optional, List, Dict, Any
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -120,7 +120,7 @@ def list_divisions():
 
 
 @app.post("/api/tasks", response_model=TaskResponse)
-def create_task(payload: TaskCreateRequest, authorization: Optional[str] = None):
+def create_task(payload: TaskCreateRequest, authorization: Optional[str] = Header(default=None)):
     # authorization should be like: Bearer <token>
     token = None
     if authorization and authorization.lower().startswith("bearer "):
@@ -142,7 +142,7 @@ def create_task(payload: TaskCreateRequest, authorization: Optional[str] = None)
 
 
 @app.get("/api/tasks")
-def list_my_tasks(authorization: Optional[str] = None):
+def list_my_tasks(authorization: Optional[str] = Header(default=None)):
     token = None
     if authorization and authorization.lower().startswith("bearer "):
         token = authorization.split(" ", 1)[1]
